@@ -51,7 +51,6 @@ const create = (req, res, next) => {
       message: "Dish must have a price that is an integer greater than 0.",
     });
   }
-  next();
 
   const newDish = {
     id: nextId(),
@@ -73,7 +72,7 @@ const read = (req, res, next) => {
 const update = (req, res, next) => {
   const { data: { id, name, description, price, image_url } = {} } = req.body;
   const { dishId } = req.params;
-  const dish = dishes.find((dish) => dish.id === dishId);
+  const dish = res.locals.dish;
   if (id && id !== dish.id) {
     return next({
       status: 400,
@@ -86,19 +85,14 @@ const update = (req, res, next) => {
       message: "Dish must have a price that is an integer greater than 0.",
     });
   }
-  if (dish.name !== name) {
-    dish.name = name;
-  }
-  if (dish.description !== description) {
-    dish.description = description;
-  }
-  if (dish.price !== price) {
-    dish.price = price;
-  }
-  if (dish.image_url !== image_url) {
-    dish.image_url = image_url;
-  }
-  res.json({ data: dish });
+  const updatedDish = {
+    id:dish.id,
+    name,
+    description,
+    price,
+    image_url,
+  };
+  res.json({ data: updatedDish });
 };
 
 module.exports = {
